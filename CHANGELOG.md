@@ -24,3 +24,6 @@ project uses [Semantic Versioning](https://semver.org/).
   summary to stderr with `--stats`.
 - Test suite for the parser, sentence splitter, token estimator, chunker, and
   CLI.
+- Tests for the package's top-level public API (`rag_chunker/__init__.py`):
+  every name in `__all__` is checked for being importable and, for
+  re-exports, for being the same object as the submodule it comes from.
