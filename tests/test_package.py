@@ -1,4 +1,17 @@
+import re
+from pathlib import Path
+
 import rag_chunker
+
+_PYPROJECT = Path(__file__).resolve().parent.parent / "pyproject.toml"
+
+
+def _pyproject_version():
+    # No tomllib on 3.9, and pulling in a TOML dependency for one field
+    # would break the zero-dependency promise, so read it as text.
+    match = re.search(r'(?m)^version\s*=\s*"([^"]+)"', _PYPROJECT.read_text())
+    assert match, "pyproject.toml has no top-level version field"
+    return match.group(1)
 
 
 def test_all_names_are_actually_importable_from_the_top_level():
@@ -26,6 +39,12 @@ def test_reexported_names_are_the_same_objects_as_the_submodules():
 def test_version_is_a_non_empty_string():
     assert isinstance(rag_chunker.__version__, str)
     assert rag_chunker.__version__
+
+
+def test_version_matches_pyproject_toml():
+    # These are two independent copies of the same fact; nothing else
+    # catches it if a release bumps one and not the other.
+    assert rag_chunker.__version__ == _pyproject_version()
 
 
 def test_chunk_markdown_is_usable_from_the_package_root():
