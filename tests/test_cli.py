@@ -4,7 +4,16 @@ import sys
 
 import pytest
 
+import rag_chunker
 from rag_chunker.cli import DEFAULT_MAX_TOKENS, DEFAULT_OVERLAP, build_parser, main
+
+
+def test_version_flag_prints_version_and_exits_without_requiring_a_path(capsys):
+    with pytest.raises(SystemExit) as exc_info:
+        build_parser().parse_args(["--version"])
+
+    assert exc_info.value.code == 0
+    assert capsys.readouterr().out == "rag-chunker %s\n" % rag_chunker.__version__
 
 
 def test_build_parser_defaults():

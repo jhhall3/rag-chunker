@@ -9,6 +9,7 @@ import argparse
 import json
 import sys
 
+from . import __version__
 from .chunker import DEFAULT_MAX_TOKENS, DEFAULT_OVERLAP, chunk_markdown, chunks_to_jsonl
 
 __all__ = ["main", "build_parser"]
@@ -19,6 +20,7 @@ def build_parser():
         prog="rag-chunker",
         description="Split a markdown file into heading-aware, token-budgeted chunks.",
     )
+    parser.add_argument("--version", action="version", version="%(prog)s " + __version__)
     parser.add_argument("path", help="markdown file to chunk, or - to read stdin")
     parser.add_argument(
         "--max-tokens", type=int, default=DEFAULT_MAX_TOKENS, help="chunk size ceiling (default: %(default)s)"

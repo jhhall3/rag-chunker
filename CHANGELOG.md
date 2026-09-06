@@ -27,3 +27,5 @@ project uses [Semantic Versioning](https://semver.org/).
 - Tests for the package's top-level public API (`rag_chunker/__init__.py`):
   every name in `__all__` is checked for being importable and, for
   re-exports, for being the same object as the submodule it comes from.
+- `--version` flag on the `rag-chunker` command, printing the installed
+  package version and exiting without requiring the `path` argument.
