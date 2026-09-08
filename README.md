@@ -36,6 +36,10 @@ python -m rag_chunker.cli doc.md --max-tokens 512 --overlap 64
 
 ## Usage
 
+The transcripts below run against [`doc.md`](doc.md), the sample runbook
+checked into this repository -- run the commands yourself against that file
+to see the same shape of output.
+
 ```console
 $ rag-chunker doc.md --max-tokens 120 --overlap 30 --stats
 4 chunks | tokens min 23 avg 68 max 104 | 0 oversized
