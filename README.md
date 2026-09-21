@@ -42,28 +42,30 @@ to see the same shape of output.
 
 ```console
 $ rag-chunker doc.md --max-tokens 120 --overlap 30 --stats
-4 chunks | tokens min 23 avg 68 max 104 | 0 oversized
+5 chunks | tokens min 23 avg 74 max 128 | 1 oversized
 ```
 
 Standard output is one JSON object per line:
 
 ```json
 {"index": 0, "text": "Vector index runbook\n\nThis runbook covers the nightly reindex job and the checks that follow it.", "heading_path": ["Vector index runbook"], "start_line": 3, "end_line": 3, "token_estimate": 23}
-{"index": 2, "text": "Vector index runbook > Reindex\n\nRun the job from the scheduler, never from a laptop:\n\n```bash\npython -m pipeline.reindex \\\n  --source s3://docs/current \\\n  --max-tokens 512 \\\n  --overlap 64\n```", "heading_path": ["Vector index runbook", "Reindex"], "start_line": 17, "end_line": 24, "token_estimate": 58}
+{"index": 1, "text": "Vector index runbook > Reindex\n\nRun the job from the scheduler, never from a laptop:\n\n```bash\npython -m pipeline.reindex \\\n  --source s3://docs/current \\\n  --max-tokens 512 \\\n  --overlap 64\n```\n\nThe job reads every document under the source prefix, chunks it, and writes\nnew vectors to a staging index. It does not touch the live index until the\nchecks below pass.", "heading_path": ["Vector index runbook", "Reindex"], "start_line": 7, "end_line": 18, "token_estimate": 100}
 ```
 
-Note that chunk 2 holds the whole shell block. At a tighter budget the same
-document splits inside the section instead, and the second chunk of a section
-opens with the tail of the first:
+Note that chunk 1 holds the whole Reindex section -- the shell block never
+splits from the prose around it. At a tighter budget the same section spreads
+across two chunks instead, and the second one opens with the tail of the
+first:
 
 ```console
 $ rag-chunker doc.md --max-tokens 60 --overlap 20 --stats
-6 chunks | tokens min 23 avg 48 max 68 | 1 oversized
+8 chunks | tokens min 23 avg 55 max 120 | 2 oversized
 ```
 
-The one oversized chunk is the checks table: 68 tokens against a 60 token
-budget, emitted whole because splitting a table off its header row makes both
-halves useless.
+Two chunks come out oversized at this budget. The checks table alone is 91
+tokens; combined with the required overlap text and heading prefix, that
+chunk lands at 120 tokens against the 60 token budget -- emitted whole
+because splitting a table off its header row makes both halves useless.
 
 Feed the output to an embedder directly:
 
